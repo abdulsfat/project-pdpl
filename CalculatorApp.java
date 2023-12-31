@@ -1,3 +1,5 @@
+// Program ini merupakan aplikasi kalkulator sederhana yang menerima input ekspresi matematika dari pengguna.
+
 import java.util.Scanner;
 import util.CalculatorLogger;
 import operation.OperasiFactory;
@@ -8,23 +10,26 @@ import java.util.ArrayList;
 
 public class CalculatorApp {
     public static void main(String[] args) {
+        // Menginisialisasi logger untuk mencatat log aplikasi
         CalculatorLogger logger = CalculatorLogger.getInstance();
         logger.log("Selamat Datang di Calculator App");
 
+        // Membuat objek Scanner untuk membaca input dari pengguna
         Scanner scanner = new Scanner(System.in);
 
+        // Variabel untuk menentukan apakah aplikasi sedang berjalan atau tidak
         boolean isRunning = true;
-        
 
         while (isRunning) {
-            // Meminta input ekspresi dari pengguna
+            // Meminta input ekspresi matematika dari pengguna
             System.out.print("Masukkan ekspresi matematika (atau ketik 'exit' untuk keluar): ");
             String expression = scanner.nextLine();
 
+            // Memeriksa apakah pengguna ingin keluar dari aplikasi
             if (expression.equalsIgnoreCase("exit")) {
                 isRunning = false;
             } else {
-                // Membuat pattern untuk mencocokkan operator dan operand
+                // Membuat pola untuk mencocokkan operator dan operand dalam ekspresi
                 Pattern pattern = Pattern.compile("(\\d+\\.?\\d*)|([\\+\\-\\*\\/])");
 
                 // Mencocokkan operator dan operand menggunakan Matcher
@@ -36,25 +41,28 @@ public class CalculatorApp {
                     tokens.add(matcher.group());
                 }
 
-                // Membuat operasi sesuai dengan operator yang dimasukkan
+                // Membuat objek operasi berdasarkan operator yang dimasukkan
                 Operasi operation = null;
                 ArrayList<Double> operands = new ArrayList<>();
 
+                // Iterasi melalui token-token dalam ekspresi
                 for (String token : tokens) {
                     if (token.matches("\\d+\\.?\\d*")) {
-                        // Token adalah operand, tambahkan ke daftar operands
+                        // Jika token adalah operand, tambahkan ke daftar operands
                         operands.add(Double.parseDouble(token));
                     } else {
-                        // Token adalah operator, buat operasi baru
+                        // Jika token adalah operator
                         if (operation == null) {
+                            // Jika belum ada operasi sebelumnya, buat operasi baru
                             operation = OperasiFactory.createOperation(token);
                         } else {
-                            // Hitung hasil operasi sebelumnya
+                            // Jika sudah ada operasi sebelumnya, hitung hasil operasi tersebut
                             double result = operation.performOperation(operands.stream().mapToDouble(Double::doubleValue).toArray());
 
-                            // Bersihkan daftar operands dan tambahkan hasil operasi
+                            // Bersihkan daftar operands dan tambahkan hasil operasi sebagai operand baru
                             operands.clear();
                             operands.add(result);
+
                             // Buat operasi baru dengan operator yang baru
                             operation = OperasiFactory.createOperation(token);
                         }
