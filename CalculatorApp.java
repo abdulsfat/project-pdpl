@@ -7,6 +7,8 @@ import operation.Operasi;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.ArrayList;
+import java.util.List;
+
 
 public class CalculatorApp {
     public static void main(String[] args) {
@@ -24,6 +26,53 @@ public class CalculatorApp {
             // Meminta input ekspresi matematika dari pengguna
             System.out.print("Masukkan ekspresi matematika (atau ketik 'exit' untuk keluar): ");
             String expression = scanner.nextLine();
+
+
+            //  operasi untuk handler
+      // Pisahkan ekspresi menjadi angka dan operasi
+      List<String> parts = new ArrayList<>();
+
+      StringBuilder currentPart = new StringBuilder();
+      for (char c : expression.toCharArray()) {
+          if (Character.isDigit(c) || c == '.') {
+              currentPart.append(c);
+          } else {
+              if (currentPart.length() > 0) {
+                  parts.add(currentPart.toString());
+                  currentPart = new StringBuilder();
+              }
+              parts.add(String.valueOf(c));
+          }
+      }
+
+      if (currentPart.length() > 0) {
+          parts.add(currentPart.toString());
+      }
+
+      // Validasi masukan
+      if (parts.size() % 2 == 0) {
+          System.out.println("Format ekspresi tidak valid");
+          return;
+      }
+
+      double[] operandshn = new double[(parts.size() + 1) / 2];
+      String[] operations = new String[parts.size() / 2];
+
+      for (int i = 0; i < parts.size(); i++) {
+          if (i % 2 == 0) {
+              try {
+                  operandshn[i / 2] = Double.parseDouble(parts.get(i));
+              } catch (NumberFormatException e) {
+                  System.out.println("Format operand tidak valid");
+                  return;
+              }
+          } else {
+              operations[i / 2] = parts.get(i);
+          }
+      }
+
+
+
 
             // Memeriksa apakah pengguna ingin keluar dari aplikasi
             if (expression.equalsIgnoreCase("exit")) {
@@ -73,9 +122,14 @@ public class CalculatorApp {
                 if (operation != null) {
                     double result = operation.performOperation(operands.stream().mapToDouble(Double::doubleValue).toArray());
                     System.out.println("Hasil operasi: " + result);
+                    
                 } else {
                     System.out.println("Tidak ada operasi yang dilakukan.");
                 }
+
+                Calculator calculator = new Calculator();
+                double result = calculator.calculate(operandshn, operations);
+System.out.println("Hasil: " + result);
             }
         }
 
