@@ -1,9 +1,10 @@
 // Kelas ini merupakan implementasi dari antarmuka Operasi untuk operasi perkalian.
 
-package operation;
+package handlers.factorymethod;
 
 public class OperasiPerkalian implements Operasi {
     // Metode performOperation untuk melakukan operasi perkalian pada array operand.
+    
     @Override
     public double performOperation(double[] operands) {
         // Inisialisasi hasil dengan nilai operand pertama.

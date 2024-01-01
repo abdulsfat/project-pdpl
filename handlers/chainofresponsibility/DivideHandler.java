@@ -1,5 +1,6 @@
+package handlers.chainofresponsibility;
 // Implementasi handler pembagian
-class DivideHandler implements CalculationHandler {
+public class DivideHandler implements CalculationHandler {
     private CalculationHandler successor;
 
     public DivideHandler(CalculationHandler successor) {

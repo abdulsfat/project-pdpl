@@ -1,6 +1,6 @@
 // Kelas ini merupakan implementasi dari antarmuka Operasi untuk operasi pertambahan.
 
-package operation;
+package handlers.factorymethod;
 
 public class OperasiPertambahan implements Operasi {
     // Metode performOperation untuk melakukan operasi pertambahan pada array operand.
@@ -17,7 +17,9 @@ public class OperasiPertambahan implements Operasi {
         // Mengembalikan hasil operasi pertambahan.
         return result;
     }
+    
 }
+
 
 /*
 Penjelasan:

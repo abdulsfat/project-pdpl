@@ -1,9 +1,10 @@
 // Kelas ini merupakan implementasi dari antarmuka Operasi untuk operasi pengurangan.
 
-package operation;
+package handlers.factorymethod;
 
 public class OperasiPengurangan implements Operasi {
     // Metode performOperation untuk melakukan operasi pengurangan pada array operand.
+    
     @Override
     public double performOperation(double[] operands) {
         // Inisialisasi hasil dengan nilai operand pertama.

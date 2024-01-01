@@ -1,6 +1,6 @@
 // Kelas ini bertanggung jawab untuk menciptakan objek operasi matematika berdasarkan operator yang diberikan.
 
-package operation;
+package handlers.factorymethod;
 
 public class OperasiFactory {
     // Metode ini menerima operator dalam bentuk string dan mengembalikan objek operasi yang sesuai.
