@@ -3,116 +3,84 @@ package view;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import handlers.factorymethod.Operasi;
-import handlers.factorymethod.OperasiFactory;
-// import model.CalculatorModel;
+
+import util.ExpressionParser;
+
+
+/**
+     * Metode untuk menerima input pengguna dan menangani operasi kalkulator.
+     * Penjelasan:
+     * 
+     * Import Statements: Mengimpor kelas-kelas yang diperlukan dari paket util dan Java.
+     * 
+     * Deklarasi Kelas: Deklarasi kelas CalculatorView.
+     * 
+     * Atribut Scanner: Mendeklarasikan objek Scanner untuk menerima input dari pengguna.
+     * 
+     * Metode getUserInput():
+     * - Loop Utama (While): Mengatur loop utama untuk terus menerima input dari pengguna hingga pengguna memilih untuk keluar.
+     * - Input Expression: Meminta pengguna untuk memasukkan ekspresi matematika atau keluar.
+     * - Exit Condition: Mengecek apakah pengguna memilih untuk keluar.
+     * - Pemecahan Ekspresi: Memecah ekspresi menjadi bagian-bagian (operand dan operator) menggunakan ExpressionParser.
+     * - Validasi Ekspresi: Memeriksa apakah format ekspresi valid.
+     * - Inisialisasi Array: Mendeklarasikan array untuk menangani operand dan operator.
+     * - Pengisian Array: Mengisi array operand dan operator menggunakan ExpressionParser.
+     * - Inisialisasi ArrayList: Inisialisasi objek ArrayList untuk menangani operand.
+     * - Iterasi Ekspresi: Iterasi melalui bagian-bagian ekspresi untuk memproses operand dan operator.
+     * - Menutup Scanner: Menutup objek Scanner setelah selesai menggunakan.
+     * - Return Statement: Mengembalikan nilai null karena metode ini seharusnya mengembalikan array double (belum diimplementasikan).
+     */
 
 public class CalculatorView {
     private Scanner scanner = new Scanner(System.in);
 
     public double[] getUserInput() {
         boolean isRunning = true;
-
         while (isRunning) {
+            // Meminta pengguna untuk memasukkan ekspresi matematika atau keluar.
             System.out.print("Masukkan ekspresi matematika (atau ketik 'exit' untuk keluar): ");
-        String expression = scanner.nextLine();
+            String expression = scanner.nextLine();
 
             if (expression.equalsIgnoreCase("exit")) {
-                isRunning = false;
+                isRunning = false; // Menghentikan loop jika pengguna memilih untuk keluar.
             } else {
-                List<String> parts = parseExpression(expression);
+                // Memecah ekspresi menjadi bagian-bagian (operand dan operator).
+                List<String> parts = ExpressionParser.parseExpression(expression);
 
+                // Memeriksa apakah format ekspresi valid.
                 if (parts.size() % 2 == 0) {
                     System.out.println("Format ekspresi tidak valid");
-                    continue;
+                    continue; // Melanjutkan loop jika format ekspresi tidak valid.
                 }
 
+                // Mendeklarasikan array untuk menangani operand dan operator.
                 double[] operandsHandler = new double[(parts.size() + 1) / 2];
                 String[] operations = new String[parts.size() / 2];
 
-                populateOperandsAndOperations(parts, operandsHandler, operations);
+                // Mengisi array operand dan operator.
+                ExpressionParser.populateOperandsAndOperations(parts, operandsHandler, operations);
 
-                Operasi operation = null;
+                // Inisialisasi objek Operasi sebagai null.
                 ArrayList<Double> operands = new ArrayList<>();
 
+                // Iterasi melalui bagian-bagian ekspresi.
                 for (String token : parts) {
+                    // Memeriksa apakah token adalah operand numerik.
                     if (token.matches("\\d+\\.?\\d*")) {
                         operands.add(Double.parseDouble(token));
                     } else {
-                        operation = handleOperator(operation, operands, token);
+                        // Menangani operator (komentar ini perlu diimplementasikan).
+                        // operation = handleOperator(operation, operands, token);
                     }
                 }
 
-                ResultProcessor.displayResult(operation, operands, operandsHandler, operations);
+                // Menampilkan hasil perhitungan.
+                ResultProcessor.displayResult(operands, operandsHandler, operations);
             }
         }
-
+        // Menutup objek Scanner setelah selesai menggunakan.
         scanner.close();
+        // Mengembalikan nilai null karena metode ini seharusnya mengembalikan array double (belum diimplementasikan).
         return null;
-    }
-
-    private List<String> parseExpression(String expression) {
-    List<String> parts = new ArrayList<>();
-    StringBuilder currentPart = new StringBuilder();
-
-    for (char c : expression.toCharArray()) {
-        if (Character.isDigit(c) || c == '.') {
-            currentPart.append(c);
-        } else {
-            if (currentPart.length() > 0) {
-                parts.add(currentPart.toString());
-                currentPart = new StringBuilder();
-            }
-            parts.add(String.valueOf(c));
-        }
-    }
-
-    if (currentPart.length() > 0) {
-        parts.add(currentPart.toString());
-    }
-
-    return parts;
-}
-
-    private void populateOperandsAndOperations(List<String> parts, double[] operandsHandler, String[] operations) {
-        for (int i = 0; i < parts.size(); i++) {
-            if (i % 2 == 0) {
-                try {
-                    operandsHandler[i / 2] = Double.parseDouble(parts.get(i));
-                } catch (NumberFormatException e) {
-                    System.out.println("Format operand tidak valid");
-                    return;
-                }
-            } else {
-                operations[i / 2] = parts.get(i);
-            }
-        }
-    }
-
-    private Operasi handleOperator(Operasi operation, ArrayList<Double> operands, String token) {
-    if (operation == null) {
-        operation = OperasiFactory.createOperation(token);
-    } else {
-        // Memastikan bahwa perkalian dan pembagian diutamakan lebih tinggi daripada penambahan dan pengurangan
-        if (token.equals("*") || token.equals("/")) {
-            if (operation.equals("+") || operation.equals("-")) {
-                operation = OperasiFactory.createOperation(token);
-            } else {
-                double result = operation.performOperation(operands.stream().mapToDouble(Double::doubleValue).toArray());
-                operands.clear();
-                operands.add(result);
-                operation = OperasiFactory.createOperation(token);
-            }
-        } else {
-            double result = operation.performOperation(operands.stream().mapToDouble(Double::doubleValue).toArray());
-            operands.clear();
-            operands.add(result);
-            operation = OperasiFactory.createOperation(token);
-        }
-    }
-    return operation;
-}
-    
-
-    
+    }     
 }
